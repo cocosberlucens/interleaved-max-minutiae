@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# Git Post-Commit Hook for Max/MSP Knowledge Base
+# 
+# This hook automatically generates an iOS-accessible knowledge base index
+# after each commit, saving it to your Obsidian vault for easy addition
+# to Claude Project Knowledge.
+#
+# Installation:
+# 1. Copy this file to: /Users/corrado/miei-repo/interleaved-max-minutiae/.git/hooks/post-commit
+# 2. Make it executable: chmod +x .git/hooks/post-commit  
+# 3. Update OBSIDIAN_VAULT_PATH below with your actual Obsidian vault path
+# 4. Create the target directory in your vault if it doesn't exist
+#
+
+# Configuration - UPDATE THIS PATH!
+OBSIDIAN_VAULT_PATH="/Users/corrado/YOUR_OBSIDIAN_VAULT_PATH_HERE"
+OUTPUT_FILE="$OBSIDIAN_VAULT_PATH/Max-MSP Project/Interleaved Max Minutiae Knowledge Base.md"
+
+# Repository paths
+REPO_PATH="/Users/corrado/miei-repo/interleaved-max-minutiae"
+SCRIPT_PATH="$REPO_PATH/.git-hooks/generate_knowledge_index.py"
+
+# Color output for better visibility
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo
+echo -e "${BLUE}🔗 Max/MSP Knowledge Base Git Hook${NC}"
+echo -e "${BLUE}====================================${NC}"
+
+# Check if we're in the right repository
+if [ ! -f "$SCRIPT_PATH" ]; then
+    echo -e "${RED}❌ Error: Knowledge index generator script not found${NC}"
+    echo -e "${RED}   Expected: $SCRIPT_PATH${NC}"
+    exit 1
+fi
+
+# Check if Obsidian vault path is configured
+if [[ "$OBSIDIAN_VAULT_PATH" == *"YOUR_OBSIDIAN_VAULT_PATH_HERE"* ]]; then
+    echo -e "${YELLOW}⚠️  Warning: Obsidian vault path not configured${NC}"
+    echo -e "${YELLOW}   Please edit this hook and set OBSIDIAN_VAULT_PATH${NC}"
+    echo -e "${YELLOW}   Hook location: $REPO_PATH/.git/hooks/post-commit${NC}"
+    exit 0
+fi
+
+# Check if Obsidian vault exists
+if [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
+    echo -e "${RED}❌ Error: Obsidian vault not found${NC}"
+    echo -e "${RED}   Path: $OBSIDIAN_VAULT_PATH${NC}"
+    exit 1
+fi
+
+# Create output directory if it doesn't exist
+OUTPUT_DIR=$(dirname "$OUTPUT_FILE")
+if [ ! -d "$OUTPUT_DIR" ]; then
+    echo -e "${YELLOW}📁 Creating directory: $OUTPUT_DIR${NC}"
+    mkdir -p "$OUTPUT_DIR"
+fi
+
+echo -e "${BLUE}🔍 Generating iOS-accessible knowledge base...${NC}"
+
+# Run the Python script
+cd "$REPO_PATH"
+
+if python3 "$SCRIPT_PATH" "$OUTPUT_FILE"; then
+    echo -e "${GREEN}✅ Knowledge base updated successfully!${NC}"
+    echo -e "${GREEN}📱 File ready for Claude iOS Project Knowledge:${NC}"
+    echo -e "${GREEN}   $OUTPUT_FILE${NC}"
+    echo
+    echo -e "${BLUE}📋 Next steps:${NC}"
+    echo -e "${BLUE}   1. Open Claude Project Knowledge settings${NC}"
+    echo -e "${BLUE}   2. Add/update the generated file${NC}"
+    echo -e "${BLUE}   3. Your Max/MSP knowledge is now iOS-accessible!${NC}"
+else
+    echo -e "${RED}❌ Error generating knowledge base${NC}"
+    exit 1
+fi
+
+echo
