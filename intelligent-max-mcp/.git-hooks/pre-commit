@@ -4,7 +4,7 @@
 echo "Running pre-commit checks..."
 
 # Activate conda environment
-source ~/anaconda3/etc/profile.d/conda.sh
+source /opt/anaconda3/etc/profile.d/conda.sh
 conda activate intelligent-max-mcp
 
 # Run formatting
