@@ -1,0 +1,95 @@
+#!/bin/bash
+# Pre-commit hook for interleaved-max-minutiae repository
+# Handles both general repository checks and MCP project-specific checks
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if we're in the MCP project directory or have MCP-related changes
+MCP_DIR="intelligent-max-mcp"
+MCP_CHANGES=$(git diff --cached --name-only | grep "^${MCP_DIR}/" || true)
+
+# General repository checks (always run)
+echo "📋 General repository checks..."
+
+# Check for large files
+if git diff --cached --name-only | xargs -I {} test -f {} && git diff --cached --name-only | xargs ls -la | awk '$5 > 1048576 { print $9 ": " $5/1048576 " MB" }' | grep .; then
+    echo "❌ Large files detected (>1MB). Please use Git LFS or reconsider:"
+    git diff --cached --name-only | xargs ls -la | awk '$5 > 1048576 { print $9 ": " $5/1048576 " MB" }'
+    exit 1
+fi
+
+# Check for merge conflict markers
+if git diff --cached | grep -E '^[+].*(<{7}|={7}|>{7})'; then
+    echo "❌ Merge conflict markers found in staged files"
+    exit 1
+fi
+
+# MCP project-specific checks (run only if MCP files changed)
+if [ -n "$MCP_CHANGES" ]; then
+    echo "🚀 MCP project changes detected - running Python checks..."
+    
+    cd "${MCP_DIR}"
+    
+    # Check if conda environment exists and activate it
+    if conda info --envs | grep -q "intelligent-max-mcp"; then
+        echo "🐍 Activating conda environment..."
+        source ~/anaconda3/etc/profile.d/conda.sh
+        conda activate intelligent-max-mcp
+    else
+        echo "⚠️  Conda environment 'intelligent-max-mcp' not found - using system Python"
+    fi
+    
+    # Check if Python files are staged
+    PYTHON_FILES=$(echo "$MCP_CHANGES" | grep '\.py$' | sed "s|^${MCP_DIR}/||" || true)
+    
+    if [ -n "$PYTHON_FILES" ]; then
+        echo "🔧 Formatting Python code..."
+        if command -v black >/dev/null 2>&1; then
+            echo "$PYTHON_FILES" | xargs black
+        else
+            echo "⚠️  Black not found - skipping formatting"
+        fi
+        
+        if command -v isort >/dev/null 2>&1; then
+            echo "$PYTHON_FILES" | xargs isort --profile black
+        else
+            echo "⚠️  isort not found - skipping import sorting"
+        fi
+        
+        echo "🔍 Running linting..."
+        if command -v flake8 >/dev/null 2>&1; then
+            if ! echo "$PYTHON_FILES" | xargs flake8; then
+                echo "❌ Linting failed. Please fix the issues before committing."
+                exit 1
+            fi
+        else
+            echo "⚠️  flake8 not found - skipping linting"
+        fi
+        
+        echo "🔎 Running type checking..."
+        if command -v mypy >/dev/null 2>&1; then
+            if ! echo "$PYTHON_FILES" | xargs mypy; then
+                echo "❌ Type checking failed. Please fix the issues before committing."
+                exit 1
+            fi
+        else
+            echo "⚠️  mypy not found - skipping type checking"
+        fi
+        
+        echo "🧪 Running tests..."
+        if command -v pytest >/dev/null 2>&1 && [ -d "tests" ]; then
+            if ! pytest tests/ -q; then
+                echo "❌ Tests failed. Please fix the issues before committing."
+                exit 1
+            fi
+        else
+            echo "⚠️  pytest not found or no tests directory - skipping tests"
+        fi
+    fi
+    
+    cd - >/dev/null  # Return to repository root
+fi
+
+echo "✅ All pre-commit checks passed!"
