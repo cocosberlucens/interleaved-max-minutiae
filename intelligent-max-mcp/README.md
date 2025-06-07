@@ -358,7 +358,7 @@ python setup.py install
 ### Configuration
 ```python
 # config.py
-CYCLING74_DOCS_URL = "https://docs.cycling74.com"
+CYCLING74_DOCS_URL = "https://docs.cycling74.com/legacy/max8"
 MINUTIAE_REPO_PATH = "../"
 KNOWLEDGE_BASE_UPDATE_INTERVAL = 300  # seconds
 PATTERN_CONFIDENCE_THRESHOLD = 0.8
