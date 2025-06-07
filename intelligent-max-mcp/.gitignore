@@ -101,3 +101,6 @@ coverage.xml
 # Backup files
 *.bak
 *.backup
+
+#workspace files
+*.code-workspace
