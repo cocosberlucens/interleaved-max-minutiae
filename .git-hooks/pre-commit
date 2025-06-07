@@ -35,7 +35,7 @@ if [ -n "$MCP_CHANGES" ]; then
     # Check if conda environment exists and activate it
     if conda info --envs | grep -q "intelligent-max-mcp"; then
         echo "🐍 Activating conda environment..."
-        source ~/anaconda3/etc/profile.d/conda.sh
+        source /opt/anaconda3/etc/profile.d/conda.sh
         conda activate intelligent-max-mcp
     else
         echo "⚠️  Conda environment 'intelligent-max-mcp' not found - using system Python"
