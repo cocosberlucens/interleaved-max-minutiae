@@ -1,0 +1,86 @@
+# Intelligent Max MCP Server Configuration
+server:
+  name: "intelligent-max-mcp"
+  version: "0.1.0"
+  description: "Intelligent Max/MSP Documentation and Patcher Generation"
+  host: "localhost"
+  port: 8000
+  debug: false
+
+# Knowledge source configurations
+knowledge_sources:
+  cycling74_docs:
+    base_url: "https://docs.cycling74.com/legacy/max8"
+    cache_duration: 3600  # 1 hour in seconds
+    max_concurrent_requests: 5
+    request_timeout: 30
+    retry_attempts: 3
+    retry_delay: 1.0
+    
+  minutiae_repo:
+    local_path: "../"  # Relative to project root
+    auto_update: true
+    update_interval: 300  # 5 minutes in seconds
+    watch_for_changes: true
+    
+  # Future: Additional knowledge sources
+  max_forum:
+    enabled: false
+    base_url: "https://cycling74.com/forums"
+    
+  youtube_tutorials:
+    enabled: false
+    api_key: ""  # To be set in environment
+
+# Patcher generation settings
+patcher_generation:
+  defaults:
+    window_size: [800, 600]
+    grid_size: 20
+    object_spacing: 50
+    font_size: 12
+    
+  templates:
+    basic:
+      window_size: [600, 400]
+      include_dac: true
+    
+    temporal_scaffolding:
+      window_size: [1200, 800]
+      include_jsui: true
+      include_transport: true
+      
+    sample_manipulation:
+      window_size: [1000, 700]
+      include_buffers: true
+      include_waveform: true
+
+# Pattern recognition and learning
+pattern_recognition:
+  confidence_threshold: 0.8
+  learning_rate: 0.1
+  max_patterns_cache: 1000
+  pattern_expiry: 86400  # 24 hours
+  auto_enhance_knowledge: true
+  
+# Caching configuration
+cache:
+  directory: "./cache"
+  max_size_mb: 100
+  cleanup_interval: 3600  # 1 hour
+  
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "./logs/intelligent-max.log"
+  max_file_size_mb: 10
+  backup_count: 5
+  console_output: true
+  
+# Development settings
+development:
+  auto_reload: true
+  profiling_enabled: false
+  debug_knowledge_engine: false
+  mock_cycling74_docs: false
