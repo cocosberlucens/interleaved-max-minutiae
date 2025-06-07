@@ -80,9 +80,14 @@ if [ -n "$MCP_CHANGES" ]; then
         
         echo "🧪 Running tests..."
         if command -v pytest >/dev/null 2>&1 && [ -d "tests" ]; then
-            if ! pytest tests/ -q; then
-                echo "❌ Tests failed. Please fix the issues before committing."
-                exit 1
+            # Check if there are actual test files
+            if find tests/ -name "test_*.py" -o -name "*_test.py" | grep -q .; then
+                if ! pytest tests/ -q; then
+                    echo "❌ Tests failed. Please fix the issues before committing."
+                    exit 1
+                fi
+            else
+                echo "📝 No test files found in tests/ directory - skipping tests"
             fi
         else
             echo "⚠️  pytest not found or no tests directory - skipping tests"

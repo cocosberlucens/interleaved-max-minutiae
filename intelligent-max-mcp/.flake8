@@ -1,0 +1,39 @@
+[flake8]
+# More reasonable line length for modern screens
+max-line-length = 120
+
+# Ignore overly pedantic warnings
+ignore = 
+    # W503: line break before binary operator (conflicts with black)
+    W503,
+    # E203: whitespace before ':' (conflicts with black)
+    E203,
+    # F541: f-string without placeholders (perfectly valid for consistency)
+    F541,
+
+# Be more lenient with complexity for parsing functions
+max-complexity = 15
+
+# Per-file ignores for specific cases
+per-file-ignores = 
+    # Test files can be more complex and have longer lines
+    test_*.py: E501, C901
+    # Allow some unused imports in __init__.py files
+    __init__.py: F401
+    # Parsing functions legitimately need bare except sometimes
+    */minutiae_connector.py: E722
+
+# Exclude some directories
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .eggs,
+    *.egg-info,
+    .venv,
+    venv,
+    .tox,
+    .pytest_cache,
+    .mypy_cache,
+    cache

@@ -7,15 +7,15 @@ This module provides the fusion of multiple knowledge sources:
 - Discovered patterns and learned insights
 """
 
-from .engine import KnowledgeFusionEngine, KnowledgeEntry, SearchResult, Pattern
 from .cycling74_connector import Cycling74Connector
+from .engine import KnowledgeEntry, KnowledgeFusionEngine, Pattern, SearchResult
 from .minutiae_connector import MinutiaeConnector
 
 __all__ = [
     "KnowledgeFusionEngine",
-    "KnowledgeEntry", 
+    "KnowledgeEntry",
     "SearchResult",
     "Pattern",
     "Cycling74Connector",
-    "MinutiaeConnector"
+    "MinutiaeConnector",
 ]
