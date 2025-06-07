@@ -1,0 +1,90 @@
+# Root-level .gitignore for interleaved-max-minutiae repository
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editor and IDE files
+.vscode/settings.json    # User-specific VS Code settings
+.idea/
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+temp/
+
+# Log files that might be created at root level
+*.log
+logs/
+.log
+
+# Cache directories that might be created at root level
+.cache/
+cache/
+.npm/
+.yarn/
+
+# Environment files (sensitive data)
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Compiled or generated files at root
+*.pyc
+__pycache__/
+
+# Documentation builds (if generated at root)
+docs/_build/
+docs/build/
+
+# Package manager files (if used at root)
+node_modules/
+.pnpm-store/
+
+# OS and application specific
+.fseventsd/
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Keep .git-hooks committed (these are integral to the project)
+# !.git-hooks/
+
+# VS Code workspace settings (keep workspace file, ignore user settings)
+.vscode/settings.json
+
+# Any local configuration overrides
+config.local.*
+*.local.config
+
+# Compressed files that might be temporary
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Database files that might be accidentally created
+*.db
+*.sqlite
+*.sqlite3
+
+# Any test artifacts at root level
+coverage.xml
+.coverage
+htmlcov/
+.pytest_cache/
