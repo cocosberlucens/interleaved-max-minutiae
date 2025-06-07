@@ -104,3 +104,6 @@ coverage.xml
 
 #workspace files
 *.code-workspace
+
+#claude
+.claude/
